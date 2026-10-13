@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Elevate COMMERCE - eBay UK Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            orange: '#ff7a1a',
+                            dark: '#090407',
+                            mauve: '#ff8a2b'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['system-ui', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --brand-orange: #ff7a1a;
+            --brand-orange-glow: rgba(255, 122, 26, 0.24);
+            --bg-base: #090407;
+            --surface-1: #0f0509;
+            --surface-2: rgba(255, 255, 255, 0.05);
+            --border-dim: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: white;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+        }
+
+        ::-webkit-scrollbar { width: 10px; height: 10px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--surface-2); border-radius: 8px; border: 2px solid var(--bg-base); }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.15); }
+
+        section, .glass-panel {
+            background-color: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border-dim);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        section:hover, .glass-panel:hover {
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.25);
+            border-color: rgba(255, 255, 255, 0.15);
+        }
+
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; appearance: textfield; }
+
+        select { cursor: pointer; background-image: none !important; }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--brand-orange) !important;
+            box-shadow: 0 0 0 3px var(--brand-orange-glow) !important;
+            transition: all 0.2s ease-out;
+        }
+
+        input[type="checkbox"] {
+            appearance: none; background-color: transparent; border: 2px solid var(--border-dim);
+            border-radius: 4px; display: grid; place-content: center; transition: all 0.2s ease;
+            width: 1.125rem; height: 1.125rem; cursor: pointer;
+        }
+        input[type="checkbox"]::before {
+            content: ""; width: 0.65em; height: 0.65em; transform: scale(0); transition: 120ms transform ease-in-out;
+            box-shadow: inset 1em 1em #60a5fa; background-color: #60a5fa; transform-origin: center;
+            clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        }
+        input[type="checkbox"]:checked { border-color: #60a5fa; }
+        input[type="checkbox"]:checked::before { transform: scale(1); }
+    </style>
+</head>
+<body class="bg-brand-dark min-h-screen flex flex-col">
+    
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_50%_-20%,#1a0b12,transparent_70%)] opacity-70"></div>
+    </div>
+
+    <main class="relative z-10 flex-1 min-w-0 p-4 md:p-8 lg:p-10">
+        <div class="max-w-7xl mx-auto pb-10">
+            <!-- Header -->
+            <header class="mb-8">
+                <div class="flex items-center gap-3 mb-2">
+                    <div class="size-10 rounded-xl bg-brand-orange/10 border border-brand-orange/20 flex items-center justify-center">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-brand-orange"><rect width="16" height="20" x="4" y="2" rx="2"></rect><line x1="8" x2="16" y1="6" y2="6"></line><line x1="16" x2="16" y1="14" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
+                    </div>
+                    <h1 class="text-2xl md:text-3xl font-display font-bold text-white">Target ROI P/L Calculator</h1>
+                </div>
+                <p class="text-white/50 text-sm">Hardcoded for eBay UK — Electronic Smoking Accessories.</p>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <!-- Fixed Marketplace Context -->
+                    <section class="p-5 rounded-2xl space-y-4">
+                        <h2 class="text-xs font-bold text-white/40 uppercase tracking-widest flex items-center gap-2">Active Configuration</h2>
+                        <div class="flex flex-wrap gap-3">
+                            <span class="px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-sm text-white/80">Platform: <b class="text-white">eBay UK (£)</b></span>
+                            <span class="px-3 py-1.5 rounded-md bg-white/5 border border-white/10 text-sm text-white/80">Category: <b class="text-white">Electronic Smoking Accessories</b></span>
+                        </div>
+                    </section>
+
+                    <!-- Target ROI Pricing Tool -->
+                    <section class="p-6 rounded-2xl space-y-4 border border-brand-orange/30 bg-gradient-to-br from-brand-orange/5 to-transparent">
+                        <h2 class="text-sm font-semibold text-brand-orange uppercase tracking-wider">Target ROI Pricer</h2>
+                        <div class="flex flex-col sm:flex-row items-end gap-4">
+                            <div class="w-full sm:flex-1">
+                                <label class="block text-xs font-medium text-white/70 mb-1.5">Target ROI (%)</label>
+                                <input id="inp-target-roi" type="number" value="20" step="1" class="w-full bg-[#0f1b2f] border border-white/10 rounded-lg px-4 py-2.5 text-lg font-bold text-white">
+                            </div>
+                            <button id="btn-auto-price" class="w-full sm:w-auto bg-brand-orange hover:bg-[#ffb067] text-[#160a05] font-bold px-6 py-2.5 rounded-lg transition-colors text-sm shadow-lg shadow-brand-orange/20 active:scale-95">
+                                Auto-Set Price
+                            </button>
+                        </div>
+                        <p class="text-xs text-white/40">Enter your desired ROI and click the button to precisely reverse-calculate the required selling price.</p>
+                    </section>
+
+                    <!-- Promoted Listings Rate -->
+                    <section class="p-5 rounded-2xl border border-brand-orange/40 bg-gradient-to-r from-brand-orange/10 to-transparent flex items-center justify-between gap-4 glass-panel">
+                        <div>
+                            <label class="block text-sm font-bold text-brand-orange mb-1 uppercase tracking-wider">Promoted Listings Ad Rate</label>
+                            <p class="text-xs text-white/50">eBay Standard Promoted Ad Fee</p>
+                        </div>
+                        <div class="relative w-32 shrink-0">
+                            <input id="inp-promo" type="number" step="0.1" value="7" class="w-full bg-[#0f1b2f] border border-brand-orange/30 focus:border-brand-orange rounded-lg pl-3 pr-8 py-2 text-lg text-white font-bold text-right transition-all" placeholder="0">
+                            <span class="absolute right-3 top-2.5 text-brand-orange/60 font-bold">%</span>
+                        </div>
+                    </section>
+
+                    <section class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Sale Details -->
+                        <div class="p-5 rounded-xl space-y-4 glass-panel">
+                            <h2 class="text-sm font-semibold text-white/60 uppercase tracking-wider">Sale Details</h2>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-white/60 mb-1">Item Selling Price (£)</label>
+                                    <input id="inp-price" type="number" value="0" step="0.01" class="w-full rounded-lg border border-white/10 bg-[#0f1b2f] px-3 py-2 text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-white/60 mb-1">Shipping Charged (£)</label>
+                                    <input id="inp-ship-charged" type="number" value="0" step="0.01" class="w-full rounded-lg border border-white/10 bg-[#0f1b2f] px-3 py-2 text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-white/60 mb-1">Quantity Sold</label>
+                                    <input id="inp-qty" type="number" value="1" step="1" class="w-full rounded-lg border border-white/10 bg-[#0f1b2f] px-3 py-2 text-white">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Unit Costs -->
+                        <div class="p-5 rounded-xl space-y-4 glass-panel">
+                            <h2 class="text-sm font-semibold text-white/60 uppercase tracking-wider">Unit Costs</h2>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-white/60 mb-1">Item Cost (£)</label>
+                                    <input id="inp-cost" type="number" value="0" step="0.01" class="w-full rounded-lg border border-white/10 bg-[#0f1b2f] px-3 py-2 text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-white/60 mb-1">Shipping Cost (£)</label>
+                                    <input id="inp-ship-cost" type="number" value="0" step="0.01" class="w-full rounded-lg border border-white/10 bg-[#0f1b2f] px-3 py-2 text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-white/60 mb-1">Other (Pack/Prep) (£)</label>
+                                    <input id="inp-other-cost" type="number" value="0" step="0.01" class="w-full rounded-lg border border-white/10 bg-[#0f1b2f] px-3 py-2 text-white">
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section class="p-5 rounded-xl space-y-4 glass-panel">
+                        <h2 class="text-sm font-semibold text-white/60 uppercase tracking-wider">Advanced Rules</h2>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+                            
+                            <label class="flex items-center gap-3 p-3 rounded-lg border border-white/10 bg-white/5 cursor-pointer hover:bg-white/10 transition">
+                                <!-- Default is UNCHECKED so VAT on fees applies -->
+                                <input id="inp-vat-reg" type="checkbox">
+                                <span class="text-sm font-medium text-white/70">VAT Registered (Removes 20% Fee Tax)</span>
+                            </label>
+                            
+                            <div class="p-3 rounded-lg border border-white/10 bg-white/5">
+                                <label class="block text-xs font-medium text-white/60 mb-1">HMRC Flat Rate VAT (%)</label>
+                                <input id="inp-hmrc" type="number" step="0.1" class="w-full bg-[#0f1b2f] border border-white/10 rounded-md px-3 py-1.5 text-sm text-white" placeholder="0">
+                            </div>
+
+                            <div class="col-span-1 sm:col-span-2">
+                                <label class="block text-xs font-medium text-white/60 mb-1">Seller Performance Level</label>
+                                <div class="relative">
+                                    <select id="inp-ebay-perf" class="w-full pl-3 pr-10 py-2.5 bg-[#0f1b2f] border border-white/10 text-white rounded-lg appearance-none">
+                                        <option value="above_standard">Above Standard (Normal)</option>
+                                        <option value="top_rated">Top Rated Seller (-10% off FVF)</option>
+                                        <option value="below_standard">Below Standard (+6% penalty)</option>
+                                    </select>
+                                    <svg class="absolute right-3 top-3 size-4 text-white/40 pointer-events-none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg>
+                                </div>
+                            </div>
+                            
+                            <label class="col-span-1 sm:col-span-2 flex items-center gap-3 p-3 rounded-lg border border-white/10 bg-white/5 cursor-pointer hover:bg-white/10 transition">
+                                <input id="inp-ebay-intl" type="checkbox">
+                                <span class="text-sm font-medium text-white/70">International Buyer (+3% Fee)</span>
+                            </label>
+                        </div>
+                    </section>
+
+                </div>
+
+                <div class="lg:col-span-5">
+                    <div class="sticky top-8 rounded-2xl p-6 glass-panel">
+                        
+                        <div class="mb-6 text-center p-6 rounded-xl bg-white/5 border border-white/10 relative overflow-hidden">
+                            <div class="text-white/60 text-sm font-bold mb-1 uppercase tracking-widest">Net Profit</div>
+                            <div id="res-profit" class="text-5xl font-bold tracking-tight text-emerald-400">£0.00</div>
+                            <div class="flex justify-center gap-4 mt-3 text-sm">
+                                <span id="res-margin" class="px-3 py-1 rounded-full font-bold bg-white/10 text-white/70">0% Margin</span>
+                                <span id="res-roi" class="px-3 py-1 rounded-full font-bold bg-white/10 text-white/70">0% ROI</span>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-4 text-center mb-6">
+                            <div class="p-3 rounded-lg bg-white/10 border border-white/5">
+                                <div class="text-xs text-white/50 uppercase font-bold">Gross Revenue</div>
+                                <div id="res-revenue" class="font-semibold text-lg text-white">£0.00</div>
+                            </div>
+                            <div class="p-3 rounded-lg bg-white/5 border border-white/5">
+                                <div class="text-xs text-white/50 uppercase font-bold">Total Costs</div>
+                                <div id="res-costs" class="font-semibold text-lg text-rose-300">£0.00</div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h3 class="text-sm font-semibold text-white/60 uppercase tracking-wider mb-3 flex justify-between">
+                                <span>Platform Fees Deducted</span>
+                                <span id="res-fees-total" class="text-white font-bold">£0.00</span>
+                            </h3>
+                            <div id="res-fee-lines" class="space-y-3 bg-black/40 p-4 rounded-xl border border-white/10 text-sm">
+                                <!-- JS Populated -->
+                            </div>
+                        </div>
+
+                        <div id="box-hmrc" class="p-4 mt-4 rounded-xl border border-emerald-400/40 bg-emerald-500/10 flex flex-col gap-1 hidden">
+                            <div class="flex items-center justify-between">
+                                <span class="text-sm font-semibold text-emerald-200 uppercase tracking-wide">HMRC Flat Rate VAT Due</span>
+                                <span id="res-hmrc" class="text-lg font-semibold text-emerald-100">£0.00</span>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+<script>
+// State to track all user inputs
+const state = {
+    price: 0, 
+    qty: 1,
+    shippingCharged: 0,
+    costPrice: 0, 
+    shippingCost: 0,
+    otherCost: 0,
+    buyerInternational: false,
+    ebaySellerPerformance: 'above_standard',
+    promotedRate: 7, 
+    targetRoi: 20,
+    vatRegistered: false, // Must be FALSE to see £3.31 VAT on fees
+    hmrcRate: 0
+};
+
+// Formatting Helper
+const formatCurrency = amount => amount.toLocaleString("en-GB", { style: "currency", currency: "GBP", minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+// Main Math Engine
+function runMath() {
+    
+    // 1. Revenue
+    const grossRev = (state.price * state.qty) + state.shippingCharged;
+    
+    // 2. Costs
+    const totalCosts = (state.costPrice * state.qty) + (state.shippingCost * state.qty) + state.otherCost;
+
+    // Fixed Math for eBay UK Electronic Smoking Accessories
+    let feeLines = [];
+    let platformFeesNet = 0; // Fees before VAT
+
+    // 3. Final Value Fee (Category: 12.9%)
+    const baseCatFee = grossRev * 0.129;
+    feeLines.push({ label: "Final Value Fee (12.9%)", amount: baseCatFee });
+    platformFeesNet += baseCatFee;
+
+    // 4. Regulatory Operating Fee (0.35%)
+    const regFee = grossRev * 0.0035;
+    feeLines.push({ label: "Regulatory operating fee (0.35%)", amount: regFee });
+    platformFeesNet += regFee;
+
+    // 5. Fixed Per-Order Fee (£0.30)
+    feeLines.push({ label: "Per-order fixed fee", amount: 0.30 });
+    platformFeesNet += 0.30;
+
+    // 6. International Buyer Fee (3%)
+    if (state.buyerInternational) {
+        const intlFee = grossRev * 0.03;
+        feeLines.push({ label: "International Fee (3%)", amount: intlFee });
+        platformFeesNet += intlFee;
+    }
+
+    // 7. Promoted Listings Rate
+    if (state.promotedRate > 0) {
+        const promoFee = grossRev * (state.promotedRate / 100);
+        feeLines.push({ label: `Promoted Listings (${state.promotedRate}%)`, amount: promoFee });
+        platformFeesNet += promoFee;
+    }
+
+    // 8. Seller Performance Levels
+    if (state.ebaySellerPerformance === 'below_standard') {
+        const penalty = grossRev * 0.06;
+        feeLines.push({ label: "Performance Penalty (+6%)", amount: penalty });
+        platformFeesNet += penalty;
+    } else if (state.ebaySellerPerformance === 'top_rated') {
+        // Top Rated Discount is 10% off the Base Final Value Fee
+        const discount = baseCatFee * 0.10;
+        feeLines.push({ label: "Top Rated Discount (-10% off FVF)", amount: -discount, color: 'text-emerald-400 font-medium' });
+        platformFeesNet -= discount;
+    }
+
+    // 9. Apply UK VAT on Fees if NOT VAT registered
+    let vatOnFees = 0;
+    if (!state.vatRegistered) {
+        vatOnFees = platformFeesNet * 0.20;
+        feeLines.push({ label: "VAT on platform fees (20%)", amount: vatOnFees });
+    }
+
+    const totalPlatformFees = platformFeesNet + vatOnFees;
+
+    // 10. Apply HMRC Flat Rate VAT if configured
+    let hmrcDue = 0;
+    if (state.hmrcRate > 0) {
+        hmrcDue = grossRev * (state.hmrcRate / 100);
+    }
+
+    // Final P/L Math
+    const netProfit = grossRev - totalPlatformFees - hmrcDue - totalCosts;
+    const margin = grossRev > 0 ? (netProfit / grossRev) * 100 : 0;
+    const roi = totalCosts > 0 ? (netProfit / totalCosts) * 100 : 0;
+
+    // --- Update UI ---
+    const netEl = document.getElementById('res-profit');
+    netEl.innerText = formatCurrency(netProfit);
+    netEl.className = `text-5xl font-bold tracking-tight ${netProfit >= 0 ? 'text-emerald-400' : 'text-rose-400'}`;
+
+    const roiEl = document.getElementById('res-roi');
+    roiEl.innerText = `${roi.toFixed(0)}% ROI`;
+    if (roi >= state.targetRoi && totalCosts > 0) {
+        roiEl.className = `px-3 py-1 rounded-full font-bold bg-emerald-500/20 text-emerald-300`;
+    } else {
+        roiEl.className = `px-3 py-1 rounded-full font-bold bg-white/10 text-white/70`;
+    }
+
+    const marginEl = document.getElementById('res-margin');
+    marginEl.innerText = `${margin.toFixed(1)}% Margin`;
+    marginEl.className = `px-3 py-1 rounded-full font-bold ${margin >= 15 ? 'bg-blue-500/20 text-blue-300' : 'bg-white/10 text-white/70'}`;
+
+    document.getElementById('res-revenue').innerText = formatCurrency(grossRev);
+    document.getElementById('res-costs').innerText = formatCurrency(totalCosts);
+    document.getElementById('res-fees-total').innerText = formatCurrency(totalPlatformFees);
+
+    const feeList = document.getElementById('res-fee-lines');
+    feeList.innerHTML = '';
+    feeLines.forEach(f => {
+        const colorClass = f.color || 'text-white/70';
+        const valClass = f.amount < 0 ? 'text-emerald-400 font-bold' : 'font-medium text-white';
+        feeList.innerHTML += `<div class="flex justify-between items-center"><span class="${colorClass}">${f.label}</span><span class="${valClass}">${formatCurrency(f.amount)}</span></div>`;
+    });
+
+    const hmrcBox = document.getElementById('box-hmrc');
+    if(state.hmrcRate > 0) {
+        hmrcBox.classList.remove('hidden');
+        document.getElementById('res-hmrc').innerText = formatCurrency(hmrcDue);
+    } else {
+        hmrcBox.classList.add('hidden');
+    }
+}
+
+// Target ROI Auto-Set Button Logic
+document.getElementById('btn-auto-price').addEventListener('click', () => {
+    const totalCosts = (state.costPrice * state.qty) + (state.shippingCost * state.qty) + state.otherCost;
+    const targetProfit = totalCosts * (state.targetRoi / 100);
+    
+    // Sum all percentages taken directly out of the Gross Revenue before VAT
+    let totalFeePct = 0.129 + 0.0035; // Cat + Reg
+    if (state.buyerInternational) totalFeePct += 0.03;
+    if (state.promotedRate > 0) totalFeePct += (state.promotedRate / 100);
+    if (state.ebaySellerPerformance === 'below_standard') totalFeePct += 0.06;
+    if (state.ebaySellerPerformance === 'top_rated') totalFeePct -= (0.129 * 0.10);
+    
+    // VAT Multiplier for eBay Fees & HMRC Flat Rate deduction
+    const vatMult = state.vatRegistered ? 1 : 1.2;
+    const hmrcPct = state.hmrcRate / 100;
+    
+    // Reverse Algebra formula to find Required Gross Revenue:
+    // Net Profit = Gross - Fees - Costs - HMRC
+    // TargetProfit = Gross - [ (Gross * totalFeePct + FixedFee) * vatMult ] - Costs - (Gross * hmrcPct)
+    // TargetProfit + Costs + (FixedFee * vatMult) = Gross * ( 1 - (totalFeePct * vatMult) - hmrcPct )
+    
+    const feePortion = (totalFeePct * vatMult) + hmrcPct;
+    const fixedFeesWithVat = 0.30 * vatMult;
+    
+    let requiredPrice = 0.01;
+    
+    if (feePortion < 1) {
+        const requiredGross = (targetProfit + totalCosts + fixedFeesWithVat) / (1 - feePortion);
+        requiredPrice = (requiredGross - state.shippingCharged) / state.qty;
+    } else {
+        alert("Target ROI is impossible. The fees percentage exceeds 100% of revenue.");
+        return;
+    }
+    
+    if (requiredPrice <= 0) requiredPrice = 0.01;
+    
+    // Standard rounding to exactly 2 decimal places
+    requiredPrice = Number(requiredPrice.toFixed(2));
+
+    // Apply to state and UI
+    state.price = requiredPrice;
+    document.getElementById('inp-price').value = requiredPrice.toFixed(2);
+    
+    // Trigger calculation
+    runMath();
+});
+
+// Universal Input Binder
+const bindInput = (id, key, isNum = true, isCheck = false) => {
+    document.getElementById(id).addEventListener('input', e => {
+        if(isCheck) state[key] = e.target.checked;
+        else if(isNum) state[key] = Number(e.target.value) || 0;
+        else state[key] = e.target.value;
+        runMath();
+    });
+};
+
+// Bind UI to State
+bindInput('inp-price', 'price');
+bindInput('inp-ship-charged', 'shippingCharged');
+bindInput('inp-qty', 'qty');
+bindInput('inp-cost', 'costPrice');
+bindInput('inp-ship-cost', 'shippingCost');
+bindInput('inp-other-cost', 'otherCost');
+bindInput('inp-target-roi', 'targetRoi');
+bindInput('inp-promo', 'promotedRate');
+bindInput('inp-hmrc', 'hmrcRate');
+bindInput('inp-vat-reg', 'vatRegistered', false, true);
+bindInput('inp-ebay-perf', 'ebaySellerPerformance', false);
+bindInput('inp-ebay-intl', 'buyerInternational', false, true);
+
+// Run initial calculation immediately on load
+runMath();
+
+</script>
+</body>
+</html>
